@@ -32,6 +32,7 @@ The included assistant searches **fictional internal policies**, checks **synthe
 - [Quick start](#quick-start)
 - [Use a real model](#use-a-real-model)
 - [Architecture](#architecture)
+- [Request flow](#request-flow)
 - [API](#api)
 - [Configuration](#configuration)
 - [Development and evaluation](#development-and-evaluation)
@@ -115,18 +116,9 @@ Real requests incur provider charges. CI and default evaluations never call a pa
 
 ## Architecture
 
-```mermaid
-flowchart TD
-    API[FastAPI] --> Runtime[Run coordinator]
-    Runtime --> Agent[Model decision]
-    Agent -->|tool calls| Gate[Registry and limits]
-    Gate --> Tools[Typed tools]
-    Tools --> Services[Business services]
-    Services --> Data[Demo data or integrations]
-    Tools -->|observations| Agent
-    Agent -->|final answer| Runtime
-    Runtime --> State[(SQLite checkpoints)]
-```
+![Agent service architecture](docs/assets/architecture.en.svg)
+
+The API receives the request; the coordinator starts the graph. The graph calls the model and tools, and saves state. **The model selects tools; the application executes them.**
 
 | Path | Responsibility |
 | --- | --- |
@@ -143,6 +135,12 @@ flowchart TD
 | `evals/` | Deterministic input/expected-behavior cases |
 
 Business rules belong in services. Tools expose those services to the model. Prompts guide behavior; code enforces tool access and execution limits. See [design decisions](docs/ARCHITECTURE.md).
+
+## Request flow
+
+![Request flow with the model and tool loop](docs/assets/request-flow.en.svg)
+
+For `12 * 7`, the calculator returns `84.0`. That observation goes back to the model to produce the final response. New tools reuse this same loop.
 
 ## API
 
