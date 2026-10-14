@@ -1,0 +1,20 @@
+[
+  {
+    "id": "demo-security",
+    "title": "Demo account security policy",
+    "text": "This fictional policy requires MFA for administrator accounts. Never share one-time passwords. Contact the help desk to recover access.",
+    "keywords": ["MFA", "security", "password", "보안", "인증", "비밀번호"]
+  },
+  {
+    "id": "demo-expenses",
+    "title": "Demo expense policy",
+    "text": "This fictional policy asks employees to submit receipts within 30 days. A manager must approve reimbursement before payment.",
+    "keywords": ["expense", "receipt", "reimbursement", "경비", "영수증"]
+  },
+  {
+    "id": "demo-support",
+    "title": "Demo support request guide",
+    "text": "Use a request ID such as REQ-1001 to check a fictional support request. This demo cannot create, modify, or close requests.",
+    "keywords": ["support", "ticket", "request", "요청", "문의"]
+  }
+]

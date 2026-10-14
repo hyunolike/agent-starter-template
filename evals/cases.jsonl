@@ -1,0 +1,7 @@
+{"name":"arithmetic","message":"12 * 7","tool":"calculate","contains":"84.0"}
+{"name":"division_by_zero","message":"10 / 0","tool":"calculate","contains":"division_by_zero","error":"division_by_zero"}
+{"name":"policy_source","message":"MFA","tool":"search_documents","contains":"demo-security"}
+{"name":"korean_policy","message":"보안","tool":"search_documents","contains":"demo-security"}
+{"name":"no_evidence","message":"unobtainium","tool":"search_documents","contains":"\"matches\": []"}
+{"name":"known_request","message":"REQ-1001","tool":"get_request_status","contains":"in_review"}
+{"name":"missing_request","message":"REQ-9999","tool":"get_request_status","contains":"\"found\": false"}

@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [develop, main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: "0.12.23"
+          enable-cache: true
+          python-version: ${{ matrix.python }}
+      - run: uv sync --frozen
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run pytest -q
+      - run: uv run python evals/evaluate.py
+      - run: uv build
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t agent-starter:ci .
+      - name: Smoke test container
+        shell: bash
+        run: |
+          docker run -d --name agent-ci -p 127.0.0.1:8000:8000 agent-starter:ci
+          trap 'docker logs agent-ci; docker rm -f agent-ci' EXIT
+          for attempt in {1..30}; do
+            if curl -fsS http://127.0.0.1:8000/healthz; then break; fi
+            sleep 1
+          done
+          curl -fsS http://127.0.0.1:8000/healthz
+          curl -fsS http://127.0.0.1:8000/v1/runs \
+            -H 'Content-Type: application/json' -d '{"message":"12 * 7"}' \
+            | python -c 'import json,sys; r=json.load(sys.stdin); assert r["status"] == "completed"; assert "84.0" in r["output"]'
